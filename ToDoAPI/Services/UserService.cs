@@ -3,6 +3,7 @@ using ToDoAPI.Services.Interfaces;
 using ToDoAPI.JWT.Model;
 using ToDoAPI.Exception;
 using ToDoAPI.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ToDoAPI.Services
 {
@@ -15,9 +16,9 @@ namespace ToDoAPI.Services
             _context = context;
         }
 
-        public User ValidateCredentials(AuthRequest authRequest)
+        public async Task<User> ValidateCredentialsAsync(AuthRequest authRequest)
         {
-            User user = _context.Users.SingleOrDefault(x => x.Username == authRequest.Username && x.Password == authRequest.Password);
+            User user = await _context.Users.SingleOrDefaultAsync(x => x.Username == authRequest.Username && x.Password == authRequest.Password);
             bool isValid = user != null && AreValidCredentials(authRequest, user);
 
             if (!isValid)

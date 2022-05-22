@@ -64,6 +64,10 @@ namespace ToDoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutToDo(int id, ToDoDTO toDoDTO)
         {
+            if(toDoDTO.Id != id)
+            {
+                return BadRequest("id and entity id not equal");
+            }
             var name = await GetIdentityClaim();
             var user = await _context.Users.Where(x => (x.Username == name.Value)).Include(u => u.ToDoList).FirstOrDefaultAsync();
 
@@ -76,10 +80,6 @@ namespace ToDoAPI.Controllers
                 IsChecked = toDoDTO.IsChecked,
                 CreateDate = toDoDTO.CreateDate
             };
-            if (id != toDo.Id)
-            {
-                return BadRequest();
-            }
 
             //_context.Entry(toDo).State = EntityState.Modified;
 
@@ -107,9 +107,6 @@ namespace ToDoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ToDoDTO>> PostToDo(ToDoDTO toDoDTO)
         {
-            //var claimName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
-            //var name = HttpContext.User.Identity.Name;
-            //var identity = HttpContext.User.Identity as ClaimsIdentity;
             var name = await GetIdentityClaim();
             var toDo =  new ToDo()
             {
@@ -118,7 +115,7 @@ namespace ToDoAPI.Controllers
                 CreateDate = toDoDTO.CreateDate,
                 User = await _context.Users.FirstOrDefaultAsync(x => (x.Username == name.Value))
             };
-            //toDo.User.ToDoList.Add(toDo);
+
             _context.ToDoes.Add(toDo);
             await _context.SaveChangesAsync();
 

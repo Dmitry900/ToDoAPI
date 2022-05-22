@@ -3,6 +3,7 @@ using ToDoAPI.JWT.Resources;
 using ToDoAPI.JWT.Services.Interfaces;
 using ToDoAPI.Services.Interfaces;
 
+
 namespace ToDoAPI.JWT.Services
 {
     public class AuthenticationService : IAuthenticationService
@@ -16,11 +17,11 @@ namespace ToDoAPI.JWT.Services
             this._tokenService = tokenService;
         }
 
-        public AuthResponse Authenticate(AuthRequest userCredentials)
+        public async Task<AuthResponse> AuthenticateAsync(AuthRequest userCredentials)
         {
-            var user = _userService.ValidateCredentials(userCredentials);
+            var user = await _userService.ValidateCredentialsAsync(userCredentials);
 
-            string securityToken = _tokenService.GetToken(user);
+            var securityToken =  await _tokenService.GetTokenAsync(user);
 
             return new AuthResponse(user,securityToken);
         }

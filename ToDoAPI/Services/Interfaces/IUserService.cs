@@ -5,7 +5,7 @@ namespace ToDoAPI.Services.Interfaces
 {
     public interface IUserService
     {
-        public User ValidateCredentials(AuthRequest authRequest);
+        public Task<User> ValidateCredentialsAsync(AuthRequest authRequest);
 
     }
 }

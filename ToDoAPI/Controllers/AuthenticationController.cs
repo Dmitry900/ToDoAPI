@@ -16,17 +16,17 @@ namespace ToDoAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Authenticate(AuthRequest request)
+        public async Task<IActionResult> Authenticate(AuthRequest request)
         {
-            //try
-            //{
-                var response = _authService.Authenticate(request);
+            try
+            {
+                var response = await _authService.AuthenticateAsync(request);
                 return Ok(response);
-            //}
-            //catch (Exception)
-            //{
-            //    return Unauthorized();
-            //}
+            }
+            catch 
+            {
+                return Unauthorized();
+            }
         }
     }
 }

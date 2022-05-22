@@ -18,10 +18,10 @@ namespace ToDoAPI.JWT.Services
             _encryptionKey = options.Value;
         }
 
-        public string GetToken(User user)
+        public async Task<string> GetTokenAsync(User user)
         {
-            SecurityTokenDescriptor tokenDescriptor = GetTokenDescriptor(user);
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var  tokenDescriptor = await GetTokenDescriptor(user);
+            var tokenHandler =  new JwtSecurityTokenHandler();
             SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
             string token = tokenHandler.WriteToken(securityToken);
 
@@ -33,13 +33,14 @@ namespace ToDoAPI.JWT.Services
             var jwt = handler.ReadJwtToken(token);
             return jwt.Claims;
         }
-        private SecurityTokenDescriptor GetTokenDescriptor(User user)
+        private async Task<SecurityTokenDescriptor> GetTokenDescriptor(User user)
         {
             const int expiringDays = 7;
+            byte[] securityKey = await Task.Factory.StartNew(() => Encoding.UTF8.GetBytes(_encryptionKey.Key));
 
-            byte[] securityKey = Encoding.UTF8.GetBytes(_encryptionKey.Key);
-            var symmetricSecurityKey = new SymmetricSecurityKey(securityKey);
             var claims = GetClaims(user);
+            var symmetricSecurityKey = new SymmetricSecurityKey(securityKey);
+
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -56,6 +57,10 @@ namespace ToDoAPI.JWT.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username)
             };
+            foreach (var userRole in user.UserRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+            }
 
             return claims;
         }

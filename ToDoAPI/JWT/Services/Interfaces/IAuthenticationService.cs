@@ -5,6 +5,6 @@ namespace ToDoAPI.JWT.Services.Interfaces
 {
     public interface IAuthenticationService
     {
-        public AuthResponse Authenticate(AuthRequest userCredentials);
+        public Task<AuthResponse> AuthenticateAsync(AuthRequest userCredentials);
     }
 }

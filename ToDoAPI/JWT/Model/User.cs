@@ -11,16 +11,6 @@ namespace ToDoAPI.JWT.Model
 
         public ICollection<ToDoAPI.Model.ToDo> ToDoList { get; set; }
         //public ICollection<string> Roles { get; set; }
-        //[NotMapped]
-        //public IEnumerable<Claim> ClaimList 
-        //{
-        //    get
-        //    {
-        //        var claims = new List<Claim> { new Claim(ClaimTypes.Name, Username) };
-        //        claims.AddRange(Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        //        return claims;
-        //    }
-        //}
     }
 }
