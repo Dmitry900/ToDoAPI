@@ -10,7 +10,7 @@ namespace ToDoAPI.JWT.Model
         public string Password { get; set; }
 
         public ICollection<ToDoAPI.Model.ToDo> ToDoList { get; set; }
-        //public ICollection<string> Roles { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; }
 
     }
 }
