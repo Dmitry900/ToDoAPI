@@ -9,6 +9,7 @@ namespace ToDoAPI.JWT.Model
         public string Username { get; set; }
         public string Password { get; set; }
 
+        public string RefreshToken { get; set; }
         public ICollection<ToDoAPI.Model.ToDo> ToDoList { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
 

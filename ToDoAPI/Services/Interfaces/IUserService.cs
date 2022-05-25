@@ -7,6 +7,8 @@ namespace ToDoAPI.Services.Interfaces
     {
         public bool IsCreated(UserDTO user);
         public Task<User> ValidateCredentialsAsync(AuthRequest authRequest);
+        public User SetRefreshToken(User user, string token);
+        public Task<User> GetUserAsync(string username);
 
     }
 }

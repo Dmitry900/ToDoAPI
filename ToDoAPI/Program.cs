@@ -35,7 +35,7 @@ builder.Services.Configure<EncryptionKey>(settingsSection);
 builder.Services.AddAuthentication(signingKey);
 
 
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 

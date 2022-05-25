@@ -5,13 +5,15 @@ namespace ToDoAPI.JWT.Resources
     {
         public int Id { get; set; }
         public string Username { get; set; }
-        public string Token { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
 
-        public AuthResponse(User user, string token)
+        public AuthResponse(User user, string accesstoken, string refreshtoken)
         {
             Id = user.Id;
             Username = user.Username;
-            Token = token;
+            AccessToken = accesstoken;
+            RefreshToken = refreshtoken;
         }
     }
 }

@@ -4,6 +4,7 @@ using ToDoAPI.JWT.Services.Interfaces;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Cryptography;
 using ToDoAPI.JWT.Model;
 using ToDoAPI.JWT.Resources;
 
@@ -18,7 +19,7 @@ namespace ToDoAPI.JWT.Services
             _encryptionKey = options.Value;
         }
 
-        public async Task<string> GetTokenAsync(User user)
+        public async Task<string> GetAccessTokenAsync(User user)
         {
             var  tokenDescriptor = await GetTokenDescriptor(user);
             var tokenHandler =  new JwtSecurityTokenHandler();
@@ -35,7 +36,7 @@ namespace ToDoAPI.JWT.Services
         }
         private async Task<SecurityTokenDescriptor> GetTokenDescriptor(User user)
         {
-            const int expiringDays = 7;
+            const int expiringMinutes = 180;
             byte[] securityKey = await Task.Factory.StartNew(() => Encoding.UTF8.GetBytes(_encryptionKey.Key));
 
             var claims = GetClaims(user);
@@ -45,12 +46,41 @@ namespace ToDoAPI.JWT.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(expiringDays),
+                Expires = DateTime.UtcNow.AddDays(expiringMinutes),
                 SigningCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature)
             };
 
             return tokenDescriptor;
         }
+
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string? token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_encryptionKey.Key)),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
+        }
+
+        public async Task<string> GetRefreshTokenAsync()
+        {
+            var randomNumber = new byte[64];
+            var rng = await Task.Factory.StartNew(() => RandomNumberGenerator.Create());
+            rng.GetBytes(randomNumber);
+            var token = Convert.ToBase64String(randomNumber);
+            return token;
+        }
+
         private IEnumerable<Claim> GetClaims(User user)
         {
             var claims = new List<Claim>
@@ -64,7 +94,5 @@ namespace ToDoAPI.JWT.Services
 
             return claims;
         }
-
-
     }
 }

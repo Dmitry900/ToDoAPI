@@ -5,7 +5,9 @@ namespace ToDoAPI.JWT.Services.Interfaces
 {
     public interface ITokenService
     {
-        public Task<string> GetTokenAsync(User user);
+        public Task<string> GetAccessTokenAsync(User user);
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string? token);
+        public Task<string> GetRefreshTokenAsync();
         public IEnumerable<Claim> DecodeToken(string token);
     }
 }

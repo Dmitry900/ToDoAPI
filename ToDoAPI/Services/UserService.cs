@@ -21,6 +21,18 @@ namespace ToDoAPI.Services
             if (user != null) return true;
             else return false;
         }
+
+        public User SetRefreshToken(User user, string token)
+        {
+            user.RefreshToken = token;
+            _context.SaveChanges();
+            return user;
+        }
+        public async Task<User> GetUserAsync(string username)
+        {
+            return await _context.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+        }
+
         public async Task<User> ValidateCredentialsAsync(AuthRequest authRequest)
         {
             User user = await _context.Users

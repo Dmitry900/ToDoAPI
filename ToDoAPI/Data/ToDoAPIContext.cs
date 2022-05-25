@@ -37,5 +37,6 @@ namespace ToDoAPI.Data
         public DbSet<ToDoAPI.Model.ToDo> ToDoes { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Role> Roles { get; set; }
+       
     }
 }
